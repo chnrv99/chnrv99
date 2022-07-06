@@ -1,5 +1,4 @@
-https://tenor.com/view/messi-ronaldo-champions-football-sports-gif-17391548
-
+<img src=">https://tenor.com/view/messi-ronaldo-champions-football-sports-gif-17391548" alt="My Project GIF" width="500" height="600">
 - 👋 Hi, I’m Nishanth C AKA @chnrv99 :) 
 - 👀 I’m interested in Web-Dev, CyberSecurity, and freestyle-football! =)
 - 🌱 I’m currently learning WebDev and DataAnalytics! :D
