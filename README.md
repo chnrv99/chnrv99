@@ -2,11 +2,9 @@
 
 [![@chnrv99's Holopin board](https://holopin.me/chnrv99)](https://holopin.io/@chnrv99)
 
-- 👋 Hi, I’m Nishanth C AKA @chnrv99 :) 
-- 👀 I’m interested in Web-Dev, CyberSecurity, and freestyle-football! =)
-- 🌱 I’m currently learning WebDev and DataAnalytics! :D
-- 💞️ I’m looking to collaborate on WebDev, CyberSecurity ;)
-- 📫 Reach me at nishanth.c2021@vitstudent.ac.in for anything!
+I like to make and break things!
+Feel free to email nishanth.c2021@vitstudent.ac.in for work or projects related! 
+
 
 <!---
 chnrv99/chnrv99 is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
