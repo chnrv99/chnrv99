@@ -2,6 +2,8 @@
 
 [![@chnrv99's Holopin board](https://holopin.me/chnrv99)](https://holopin.io/@chnrv99)
 
+[![@chnrv99's HackTheBox](https://www.hackthebox.com/badge/image/963787)](https://www.hackthebox.com/badge/image/963787)
+
 I like to make and break things!
 Feel free to email nishanth.c2021@vitstudent.ac.in for work or projects related! 
 
