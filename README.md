@@ -4,8 +4,7 @@
 
 [![@chnrv99's HackTheBox](https://www.hackthebox.com/badge/image/963787)](https://www.hackthebox.com/badge/image/963787)
 
-I like to make and break things!
-Feel free to email nishanth.c2021@vitstudent.ac.in for work or projects related! 
+https://www.cloudskillsboost.google/public_profiles/c5baed26-65be-4c84-99e4-faecf5e05733/
 
 
 <!---
