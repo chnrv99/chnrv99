@@ -14,18 +14,24 @@
 
 # Achievements
 - AZ-900 and AI-900 Certified - [![@chnrv99's Certificates]](https://learn.microsoft.com/en-us/users/nishanthc-4631/transcript/d5er8uren84y5gp?tab=tab-learning-paths)
-- Google Cloud Career Practitioner - [![@chnrv99's Certificates]](https://www.cloudskillsboost.google/public_profiles/c5baed26-65be-4c84-99e4-faecf5e05733)
+- Google Cloud Career Practitioner - [![@chnrv99's Badges]](https://www.cloudskillsboost.google/public_profiles/c5baed26-65be-4c84-99e4-faecf5e05733) 
 - Developer Lead @cyscomvit
-- Microsoft Learn Student Ambassador Beta Milestone
+- Microsoft Learn Student Ambassador Beta Milestone - [![@chnrv99's MVP Profile]](https://mvp.microsoft.com/en-US/studentambassadors/profile/26173cec-824f-4f17-ae18-1a7d731cf064) 
 - ML Domain winners at Computer Society of India National Hackathon
-- Silver Rank on HackTheBox Season 3(position - 2692). Overall - Hacker Rank
+- Silver Rank on HackTheBox Season 3(position - 2692). Overall Rank - Hacker [![@chnrv99's Season Rank]](https://labs.hackthebox.com/achievement/season/963787/3)
+
+# Socials
+- LinkedIn - [![@chnrv99's LinkedIn]](https://www.linkedin.com/in/nishanth-chandrasekaran/)
+- Email - [![@chnrv99's Email]](nishanth.c2021@vitstudent.ac.in)
+- Instagram - [![@chnrv99's Insta]](https://www.instagram.com/chnrv/)
+- Portfolio - [![@chnrv99's Websote]](https://chnrv.vercel.app/)
 ---
 
 [![@chnrv99's Holopin board](https://holopin.me/chnrv99)](https://holopin.io/@chnrv99)
 
 [![@chnrv99's HackTheBox](https://www.hackthebox.com/badge/image/963787)](https://www.hackthebox.com/badge/image/963787)
 
-
+[![@chnrv99's HackTheBoxSeasons](https://labs.hackthebox.com/achievement/season/963787/3)]([https://holopin.io/@chnrv99](https://labs.hackthebox.com/achievement/season/963787/3))
 https://labs.hackthebox.com/achievement/season/963787/3
 
 ---
