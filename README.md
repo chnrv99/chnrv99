@@ -1,4 +1,6 @@
-![messi-ronaldo](https://user-images.githubusercontent.com/95633551/177534931-0c36d9ea-ebe2-4838-b581-96c03ae1330e.gif)
+<div align="center">
+  <img src="https://user-images.githubusercontent.com/95633551/177534931-0c36d9ea-ebe2-4838-b581-96c03ae1330e.gif" alt="Messi vs Ronaldo">
+</div>
 
 # Hey there! 👋 I'm Nishanth 
 - I am currently in my pre-final year at VIT Chennai, pursuing B.Tech CSE
