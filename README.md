@@ -34,6 +34,9 @@
 - Silver Rank on HackTheBox Season 3 (position - 2692) [![@chnrv99's Season Rank]](https://labs.hackthebox.com/achievement/season/963787/3)
 - Team Cyscom - 59th position on NahamCon CTF 2023
 
+# Tech Stack
+ I want to be that kind of developer who dosen't restrict himself based on tech stacks, rather learns the logic on building products given the resources he has.
+
 # Socials
 - LinkedIn - [![@chnrv99's LinkedIn]](https://www.linkedin.com/in/nishanth-chandrasekaran/)
 - Email - [![@chnrv99's Email]](nishanth.c2021@vitstudent.ac.in)
