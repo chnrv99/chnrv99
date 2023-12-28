@@ -36,7 +36,7 @@
 - LinkedIn - [![@chnrv99's LinkedIn]](https://www.linkedin.com/in/nishanth-chandrasekaran/)
 - Email - [![@chnrv99's Email]](nishanth.c2021@vitstudent.ac.in)
 - Instagram - [![@chnrv99's Insta]](https://www.instagram.com/chnrv/)
-- Portfolio - [![@chnrv99's Websote]](https://chnrv.vercel.app/)
+- Portfolio - [![@chnrv99's Website]](https://chnrv.vercel.app/)
 
 
 
