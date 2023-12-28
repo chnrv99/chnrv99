@@ -1,13 +1,35 @@
 ![messi-ronaldo](https://user-images.githubusercontent.com/95633551/177534931-0c36d9ea-ebe2-4838-b581-96c03ae1330e.gif)
 
+# Hey there! 👋 I'm Nishanth 
+- I am currently in my pre-final year at VIT Chennai, pursuing B.Tech CSE
+- An open source enthuiast, contributed to organizations like CYSCOM VIT Chennai, Tor Project, etc.
+- I like to dance, and my celebrity crush is, **Drumroll, please...** 🥁 Cristiano Ronaldo SIUUUUUUUUUU!
+- I am that type of guy, who likes to socialise and have fun! Feel free to contact me at my socials!!
+
+
+# Hacker and Developer
+- I like to develop stuff that helps others, some of my projects are pinned above!
+- I am a security enthuiast. I am a firm believer that shifting security to left side of AGILE framework is critical.
+- Active in HackTheBox and HackerOne
+
+# Achievements
+- AZ-900 and AI-900 Certified - [![@chnrv99's Certificates]](https://learn.microsoft.com/en-us/users/nishanthc-4631/transcript/d5er8uren84y5gp?tab=tab-learning-paths)
+- Google Cloud Career Practitioner - [![@chnrv99's Certificates]](https://www.cloudskillsboost.google/public_profiles/c5baed26-65be-4c84-99e4-faecf5e05733)
+- Developer Lead @cyscomvit
+- Microsoft Learn Student Ambassador Beta Milestone
+- ML Domain winners at Computer Society of India National Hackathon
+- Silver Rank on HackTheBox Season 3(position - 2692). Overall - Hacker Rank
+---
+
 [![@chnrv99's Holopin board](https://holopin.me/chnrv99)](https://holopin.io/@chnrv99)
 
 [![@chnrv99's HackTheBox](https://www.hackthebox.com/badge/image/963787)](https://www.hackthebox.com/badge/image/963787)
 
+
 https://labs.hackthebox.com/achievement/season/963787/3
 
+---
 
-https://www.cloudskillsboost.google/public_profiles/c5baed26-65be-4c84-99e4-faecf5e05733/
 
 
 <!---
