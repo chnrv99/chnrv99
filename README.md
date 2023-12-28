@@ -1,4 +1,4 @@
-<h1 align="center"><img src="https://media3.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif"></h1>
+<h1 align="center"><img src="puddle_jumper_octodex.jpg" width=600 height=500></h1>
 
 
 
