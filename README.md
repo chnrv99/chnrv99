@@ -21,7 +21,7 @@
 
 
 # Hacker and Developer
-- I like to develop stuff that helps others, some of my projects are pinned below!
+- I like to develop stuff that impacts other people's lives, whether small or big, some of my projects are pinned below!
 - I am a security enthuiast. I am a firm believer that shifting security to left side of AGILE framework is critical.
 - Active in HackTheBox and HackerOne
 
