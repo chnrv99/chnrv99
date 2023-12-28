@@ -32,7 +32,7 @@
 [![@chnrv99's HackTheBox](https://www.hackthebox.com/badge/image/963787)](https://www.hackthebox.com/badge/image/963787)
 
 [![@chnrv99's HackTheBoxSeasons](https://labs.hackthebox.com/achievement/season/963787/3)]([https://holopin.io/@chnrv99](https://labs.hackthebox.com/achievement/season/963787/3))
-https://labs.hackthebox.com/achievement/season/963787/3
+
 
 ---
 
