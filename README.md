@@ -24,7 +24,7 @@
 - Active in HackTheBox and HackerOne
 
 # Achievements and Honors
-- AZ-900 and AI-900 Certified - [![@chnrv99's Certificates]](https://learn.microsoft.com/en-us/users/nishanthc-4631/transcript/d5er8uren84y5gp?tab=tab-learning-paths)
+- Microsoft Azure AZ-900 and AI-900 Certified - [![@chnrv99's Certificates]](https://learn.microsoft.com/en-us/users/nishanthc-4631/transcript/d5er8uren84y5gp?tab=tab-learning-paths)
 - Google Cloud Career Practitioner - [![@chnrv99's Badges]](https://www.cloudskillsboost.google/public_profiles/c5baed26-65be-4c84-99e4-faecf5e05733) 
 - Developer Lead @cyscomvit
 - Microsoft Learn Student Ambassador Beta Milestone - [![@chnrv99's MVP Profile]](https://mvp.microsoft.com/en-US/studentambassadors/profile/26173cec-824f-4f17-ae18-1a7d731cf064) 
