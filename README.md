@@ -3,7 +3,7 @@
 
 
 # Hey there! 👋 I'm Nishanth 
-- I am currently in my pre-final year at VIT Chennai, pursuing B.Tech CSE
+- I am currently in my final year at VIT Chennai, pursuing B.Tech CSE
 - An open source enthuiast, contributed to organizations like CYSCOM VIT Chennai, Tor Project, OWASP, etc.
 - I like to dance, and my celebrity crush is, **Drumroll, please...** 🥁 Cristiano Ronaldo SIUUUUUUUUUU!
 - I am that type of guy, who likes to socialise and have fun! Feel free to contact me at my socials!!
@@ -24,6 +24,7 @@
 - I like to develop stuff that impacts other people's lives, whether small or big, some of my projects are pinned below!
 - I am a security enthuiast. I am a firm believer that shifting security to left side of AGILE framework is critical.
 - Active in HackTheBox and HackerOne
+- Currently interning at [Knit API](https://www.getknit.dev/) 
 
 # Achievements and Honors
 - Microsoft Azure AZ-900 and AI-900 Certified - [![@chnrv99's Certificates]](https://learn.microsoft.com/en-us/users/nishanthc-4631/transcript/d5er8uren84y5gp?tab=tab-learning-paths)
