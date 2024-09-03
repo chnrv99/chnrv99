@@ -4,7 +4,7 @@
 
 # Hey there! 👋 I'm Nishanth 
 - I am currently in my pre-final year at VIT Chennai, pursuing B.Tech CSE
-- An open source enthuiast, contributed to organizations like CYSCOM VIT Chennai, Tor Project, etc.
+- An open source enthuiast, contributed to organizations like CYSCOM VIT Chennai, Tor Project, OWASP, etc.
 - I like to dance, and my celebrity crush is, **Drumroll, please...** 🥁 Cristiano Ronaldo SIUUUUUUUUUU!
 - I am that type of guy, who likes to socialise and have fun! Feel free to contact me at my socials!!
 
