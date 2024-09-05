@@ -1,0 +1,77 @@
+#include <WiFi.h>
+#include <PubSubClient.h>
+
+// Wi-Fi credentials
+const char* ssid = "Your_SSID";
+const char* password = "Your_PASSWORD";
+
+// MQTT Broker IP address
+const char* mqtt_server = "Your_Raspberry_Pi_IP";
+
+// LED GPIO pins
+const int led1 = 16;
+const int led2 = 17;
+const int led3 = 18;
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+
+// Callback function to handle messages from the broker
+void callback(char* topic, byte* message, unsigned int length) {
+  String msg;
+  for (int i = 0; i < length; i++) {
+    msg += (char)message[i];
+  }
+  Serial.print("Message arrived on topic: ");
+  Serial.println(topic);
+  Serial.print("Message: ");
+  Serial.println(msg);
+
+  // Control LEDs based on received message
+  if (String(topic) == "home/led1") {
+    digitalWrite(led1, msg == "ON" ? HIGH : LOW);
+  } else if (String(topic) == "home/led2") {
+    digitalWrite(led2, msg == "ON" ? HIGH : LOW);
+  } else if (String(topic) == "home/led3") {
+    digitalWrite(led3, msg == "ON" ? HIGH : LOW);
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+  
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
+  pinMode(led3, OUTPUT);
+
+  // Connect to Wi-Fi
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("WiFi connected");
+
+  // Connect to MQTT Broker
+  client.setServer(mqtt_server, 1883);
+  client.setCallback(callback);
+
+  // Reconnect if connection is lost
+  while (!client.connected()) {
+    Serial.println("Connecting to MQTT...");
+    if (client.connect("ESP32Client")) {
+      Serial.println("Connected");
+      client.subscribe("home/led1");
+      client.subscribe("home/led2");
+      client.subscribe("home/led3");
+    } else {
+      Serial.print("Failed, rc=");
+      Serial.print(client.state());
+      delay(2000);
+    }
+  }
+}
+
+void loop() {
+  client.loop();
+}
