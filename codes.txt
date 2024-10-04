@@ -1,0 +1,51 @@
+import socket
+
+# Set up the server
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+host = 'localhost'  # Server's hostname or IP address
+port = 12345  # Port number for communication
+
+# Bind the socket to the address and port
+server_socket.bind((host, port))
+
+# Start listening for connections
+server_socket.listen(5)
+print(f"Server listening on {host}:{port}")
+
+while True:
+    # Accept a client connection
+    client_socket, addr = server_socket.accept()
+    print(f"Got a connection from {addr}")
+    
+    # Receive data from the client
+    data = client_socket.recv(1024).decode('utf-8')
+    print(f"Received from client: {data}")
+    
+    # Send a response back to the client
+    client_socket.send("Hello from server".encode('utf-8'))
+    
+    # Close the connection
+    client_socket.close()
+
+
+import socket
+
+# Set up the client
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+host = 'localhost'  # Server's hostname or IP address
+port = 12345  # Same port as the server
+
+# Connect to the server
+client_socket.connect((host, port))
+
+# Send data to the server
+client_socket.send("Hello from client".encode('utf-8'))
+
+# Receive data from the server
+data = client_socket.recv(1024).decode('utf-8')
+print(f"Received from server: {data}")
+
+# Close the connection
+client_socket.close()
+
+
