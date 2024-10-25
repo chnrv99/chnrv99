@@ -199,3 +199,81 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+
+new code
+import pygatt
+import json
+import time
+import requests
+
+# UUIDs must match those in the ESP32 script
+SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
+CHARACTERISTIC_UUID = "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+API_ENDPOINT = "https://cpsdproject.azurewebsites.net/api/data"
+
+def send_data_to_api(temperature, humidity):
+    # Prepare the payload for the POST request
+    payload = {
+        "sensor_data": {
+            "temperature": temperature,
+            "humidity": humidity
+        }
+    }
+
+    # Send the POST request to the API endpoint
+    response = requests.post(API_ENDPOINT, json=payload)
+
+    # Check for a successful response
+    if response.status_code == 200:
+        print("Data successfully sent to Azure API!")
+    else:
+        print(f"Failed to send data. Status code: {response.status_code}, Response: {response.text}")
+
+def main():
+    # Replace this with your ESP32's MAC address after scanning for BLE devices
+    esp32_mac_address = "XX:XX:XX:XX:XX:XX"
+
+    # Initialize the adapter
+    adapter = pygatt.GATTToolBackend()
+    adapter.start()
+
+    try:
+        print("Connecting to ESP32...")
+        device = adapter.connect(esp32_mac_address)
+
+        while True:
+            # Read the characteristic value
+            data = device.char_read(CHARACTERISTIC_UUID)
+            data_str = data.decode('utf-8')
+            print("Received data:", data_str)
+
+            try:
+                # Parse the JSON-like string into a dictionary
+                sensor_data = json.loads(data_str)
+                temperature = sensor_data.get("temperature", "N/A")
+                humidity = sensor_data.get("humidity", "N/A")
+
+                # Print the values
+                print(f"Temperature: {temperature} °C, Humidity: {humidity} %")
+
+                # Send the data to Azure API
+                send_data_to_api(temperature, humidity)
+
+            except json.JSONDecodeError:
+                print("Failed to parse the received data")
+
+            time.sleep(1)
+
+    except pygatt.exceptions.NotConnectedError:
+        print("Failed to connect to the device")
+    except KeyboardInterrupt:
+        print("Program stopped by user")
+    finally:
+        adapter.stop()
+        print("Disconnected from ESP32")
+
+if __name__ == "__main__":
+    main()
