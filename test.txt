@@ -1,77 +1,438 @@
+Exp 5:
+Code: 
+#include <BLEDevice.h> 
+#include <BLEServer.h> 
+#include <BLEUtils.h> 
+#include <BLE2902.h> 
+BLEServer* pServer = NULL; 
+BLECharacteristic* pCharacteristic = NULL; 
+bool deviceConnected = false; 
+const char* serviceUUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b"; 
+const char* charUUID = "beb5483e-36e1-4688-b7f5-ea07361b26a8"; 
+class MyServerCallbacks: public BLEServerCallbacks { 
+void onConnect(BLEServer* pServer) { 
+deviceConnected = true; 
+}; 
+void onDisconnect(BLEServer* pServer) { 
+deviceConnected = false; 
+} 
+}; 
+void setup() { 
+Serial.begin(115200); 
+// Set the custom BLE name here 
+BLEDevice::init("My_ESP32_BLE"); 
+pServer = BLEDevice::createServer(); 
+pServer->setCallbacks(new MyServerCallbacks()); 
+BLEService *pService = pServer->createService(serviceUUID); 
+pCharacteristic = pService->createCharacteristic( 
+charUUID, 
+BLECharacteristic::PROPERTY_READ | 
+BLECharacteristic::PROPERTY_WRITE | 
+BLECharacteristic::PROPERTY_NOTIFY | 
+BLECharacteristic::PROPERTY_INDICATE 
+); 
+pCharacteristic->addDescriptor(new BLE2902()); 
+pService->start(); 
+pServer->getAdvertising()->start(); 
+Serial.println("Waiting for a client connection to notify..."); 
+} 
+void loop() { 
+if (deviceConnected) { 
+pCharacteristic->setValue("Hello from ESP32"); 
+pCharacteristic->notify(); 
+delay(1000); 
+} 
+} 
+#include <WiFi.h> 
+#include <PubSubClient.h> 
+const char* ssid = "IOT_PROJ"; 
+const char* password = "J8g4gKA2"; 
+const char* mqttServer = "172.16.61.77"; // Update with your Raspberry Pi's actual IP address 
+const int mqttPort = 1883; 
+WiFiClient espClient; 
+PubSubClient client(espClient); 
+void setup() { 
+Serial.begin(115200); 
+setupWifi(); 
+client.setServer(mqttServer, mqttPort); 
+client.setCallback(callback); 
+} 
+void setupWifi() { 
+delay(10); 
+Serial.println(); 
+Serial.print("Connecting to "); 
+Serial.println(ssid); 
+WiFi.begin(ssid, password); 
+while (WiFi.status() != WL_CONNECTED) { 
+delay(500); 
+Serial.print("."); 
+} 
+Serial.println("\nWiFi connected"); 
+Serial.println("IP address: "); 
+Serial.println(WiFi.localIP()); 
+} 
+void callback(char* topic, byte* payload, unsigned int length) { 
+Serial.print("Message arrived ["); 
+Serial.print(topic); 
+Serial.print("] "); 
+for (int i = 0; i < length; i++) { 
+Serial.print((char)payload[i]); 
+} 
+Serial.println(); 
+} 
+void reconnect() { 
+while (!client.connected()) { 
+Serial.print("Attempting MQTT connection..."); 
+if (client.connect("ESP32Client")) { 
+Serial.println("connected"); 
+client.subscribe("test/topic"); 
+} else { 
+Serial.print("failed, rc="); 
+Serial.print(client.state()); 
+Serial.println(" try again in 5 seconds"); 
+delay(5000); 
+} 
+} 
+} 
+void loop() { 
+if (!client.connected()) { 
+reconnect(); 
+} 
+client.loop(); 
+client.publish("test/topic", "Hello from ESP32"); 
+Serial.println("Hello Sent"); 
+delay(5000); 
+}
+--------------------------------------------------------------------------
+Exp 3:
+ESP32:
+
 #include <WiFi.h>
 #include <PubSubClient.h>
 
 // Wi-Fi credentials
-const char* ssid = "Your_SSID";
-const char* password = "Your_PASSWORD";
+const char* ssid = "your_SSID";
+const char* password = "your_PASSWORD";
 
-// MQTT Broker IP address
-const char* mqtt_server = "Your_Raspberry_Pi_IP";
+// MQTT Broker details
+const char* mqtt_server = "your_raspberry_pi_ip";
+const int mqtt_port = 1883;
 
-// LED GPIO pins
-const int led1 = 16;
-const int led2 = 17;
-const int led3 = 18;
+// Topics
+const char* topic1 = "home/led/1";
+const char* topic2 = "home/led/2";
+const char* topic3 = "home/led/3";
 
+// LED pins
+const int ledPin1 = 5;
+const int ledPin2 = 18;
+const int ledPin3 = 19;
+
+// Initialize Wi-Fi and MQTT clients
 WiFiClient espClient;
 PubSubClient client(espClient);
-
-// Callback function to handle messages from the broker
-void callback(char* topic, byte* message, unsigned int length) {
-  String msg;
-  for (int i = 0; i < length; i++) {
-    msg += (char)message[i];
-  }
-  Serial.print("Message arrived on topic: ");
-  Serial.println(topic);
-  Serial.print("Message: ");
-  Serial.println(msg);
-
-  // Control LEDs based on received message
-  if (String(topic) == "home/led1") {
-    digitalWrite(led1, msg == "ON" ? HIGH : LOW);
-  } else if (String(topic) == "home/led2") {
-    digitalWrite(led2, msg == "ON" ? HIGH : LOW);
-  } else if (String(topic) == "home/led3") {
-    digitalWrite(led3, msg == "ON" ? HIGH : LOW);
-  }
-}
 
 void setup() {
   Serial.begin(115200);
   
-  pinMode(led1, OUTPUT);
-  pinMode(led2, OUTPUT);
-  pinMode(led3, OUTPUT);
-
+  // Setup LED pins as output
+  pinMode(ledPin1, OUTPUT);
+  pinMode(ledPin2, OUTPUT);
+  pinMode(ledPin3, OUTPUT);
+  
   // Connect to Wi-Fi
+  connectWiFi();
+
+  // Set up MQTT server
+  client.setServer(mqtt_server, mqtt_port);
+  client.setCallback(callback);
+  
+  // Connect to MQTT
+  connectMQTT();
+}
+
+void loop() {
+  if (!client.connected()) {
+    connectMQTT();
+  }
+  client.loop();
+}
+
+// Wi-Fi connection function
+void connectWiFi() {
+  delay(10);
+  Serial.println("Connecting to WiFi...");
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-  Serial.println("WiFi connected");
+  Serial.println("Connected to WiFi");
+}
 
-  // Connect to MQTT Broker
-  client.setServer(mqtt_server, 1883);
-  client.setCallback(callback);
-
-  // Reconnect if connection is lost
+// MQTT connection function
+void connectMQTT() {
   while (!client.connected()) {
     Serial.println("Connecting to MQTT...");
     if (client.connect("ESP32Client")) {
-      Serial.println("Connected");
-      client.subscribe("home/led1");
-      client.subscribe("home/led2");
-      client.subscribe("home/led3");
+      Serial.println("Connected to MQTT broker");
+
+      // Subscribe to LED topics
+      client.subscribe(topic1);
+      client.subscribe(topic2);
+      client.subscribe(topic3);
     } else {
-      Serial.print("Failed, rc=");
-      Serial.print(client.state());
-      delay(2000);
+      delay(5000);
     }
   }
 }
 
-void loop() {
-  client.loop();
+// MQTT callback function
+void callback(char* topic, byte* message, unsigned int length) {
+  String msg;
+  for (int i = 0; i < length; i++) {
+    msg += (char)message[i];
+  }
+  
+  Serial.print("Message received on topic: ");
+  Serial.println(topic);
+  Serial.print("Message: ");
+  Serial.println(msg);
+
+  // Control LEDs based on the topic and message
+  if (String(topic) == topic1) {
+    digitalWrite(ledPin1, msg == "ON" ? HIGH : LOW);
+  } else if (String(topic) == topic2) {
+    digitalWrite(ledPin2, msg == "ON" ? HIGH : LOW);
+  } else if (String(topic) == topic3) {
+    digitalWrite(ledPin3, msg == "ON" ? HIGH : LOW);
+  }
 }
+
+Rasberry pi:
+# Publisher Script on Raspberry Pi (MQTT_Publisher.py)
+import paho.mqtt.client as mqtt
+import time
+
+# MQTT Broker details
+broker_address = "localhost"  # or use the IP address of the Raspberry Pi
+topic1 = "home/led/1"
+topic2 = "home/led/2"
+topic3 = "home/led/3"
+
+# Setup MQTT client and connect
+client = mqtt.Client()
+client.connect(broker_address)
+
+# Function to publish messages
+def control_led(led, state):
+    topic = f"home/led/{led}"
+    message = "ON" if state else "OFF"
+    client.publish(topic, message)
+    print(f"Published '{message}' to {topic}")
+
+# Example loop to toggle LEDs
+try:
+    while True:
+        control_led(1, True)   # Turn on LED1
+        time.sleep(1)
+        control_led(1, False)  # Turn off LED1
+        control_led(2, True)   # Turn on LED2
+        time.sleep(1)
+        control_led(2, False)  # Turn off LED2
+        control_led(3, True)   # Turn on LED3
+        time.sleep(1)
+        control_led(3, False)  # Turn off LED3
+except KeyboardInterrupt:
+    print("Exiting...")
+finally:
+    client.disconnect()
+
+---------------------------------------------------------
+Exp 2:
+# WebSocket Server on Raspberry Pi (WebSocket_LED_Control.py)
+import asyncio
+import websockets
+import RPi.GPIO as GPIO
+
+# GPIO Setup
+GPIO.setmode(GPIO.BCM)
+LED_PINS = {
+    "LED1": 17,
+    "LED2": 27,
+    "LED3": 22
+}
+for pin in LED_PINS.values():
+    GPIO.setup(pin, GPIO.OUT)
+    GPIO.output(pin, GPIO.LOW)
+
+# WebSocket handler
+async def handle_led_control(websocket, path):
+    async for message in websocket:
+        print(f"Received message: {message}")
+        
+        if message in ["LED1 ON", "LED2 ON", "LED3 ON"]:
+            led = message.split()[0]
+            GPIO.output(LED_PINS[led], GPIO.HIGH)
+            await websocket.send(f"{led} is ON")
+        
+        elif message in ["LED1 OFF", "LED2 OFF", "LED3 OFF"]:
+            led = message.split()[0]
+            GPIO.output(LED_PINS[led], GPIO.LOW)
+            await websocket.send(f"{led} is OFF")
+        
+        else:
+            await websocket.send("Invalid command")
+
+# Start the WebSocket server
+async def main():
+    async with websockets.serve(handle_led_control, "0.0.0.0", 8765):
+        print("WebSocket server is running on ws://0.0.0.0:8765")
+        await asyncio.Future()  # Run forever
+
+try:
+    asyncio.run(main())
+except KeyboardInterrupt:
+    print("Server shutting down...")
+finally:
+    GPIO.cleanup()
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LED Control via WebSocket</title>
+<script>
+  let socket = new WebSocket("ws://raspberry_pi_ip:8765");
+
+  socket.onopen = function() {
+    console.log("Connected to WebSocket server");
+  };
+
+  socket.onmessage = function(event) {
+    console.log("Message from server:", event.data);
+    document.getElementById("status").innerText = event.data;
+  };
+
+  socket.onclose = function() {
+    console.log("Disconnected from WebSocket server");
+  };
+
+  function sendCommand(command) {
+    socket.send(command);
+  }
+</script>
+</head>
+<body>
+  <h2>Control LEDs via WebSocket</h2>
+  <p id="status">Status: Waiting for command...</p>
+  <button onclick="sendCommand('LED1 ON')">LED1 ON</button>
+  <button onclick="sendCommand('LED1 OFF')">LED1 OFF</button>
+  <br>
+  <button onclick="sendCommand('LED2 ON')">LED2 ON</button>
+  <button onclick="sendCommand('LED2 OFF')">LED2 OFF</button>
+  <br>
+  <button onclick="sendCommand('LED3 ON')">LED3 ON</button>
+  <button onclick="sendCommand('LED3 OFF')">LED3 OFF</button>
+</body>
+</html>
+---------------------------------------------------------------------
+Exp 4:
+CLIENT.PY 
+import asyncio 
+from bleak import BleakScanner, BleakClient 
+# Replace these with your actual UUIDs 
+SERVICE_UUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b" 
+CHARACTERISTIC_UUID = "beb5483e-36e1-4688-b7f5-ea07361b26a8" 
+async def scan_for_devices(): 
+print("Scanning for devices...") 
+devices = await BleakScanner.discover() 
+for device in devices: 
+print(f"Found device: {device.name} ({device.address})") 
+if device.address == "E0:5A:1B:A1:8D:D6": # Change this to your 
+ESP32's name 
+return device 
+return None 
+async def connect_and_read(device): 
+async with BleakClient(device) as client: 
+print(f"Connected: {client.is_connected}") 
+data = await client.read_gatt_char(CHARACTERISTIC_UUID) 
+print(f"Received data: {data.decode()}") 
+async def main(): 
+device = await scan_for_devices() 
+if device: 
+await connect_and_read(device) 
+else: 
+print("ESP32 device not found.") 
+if __name__ == "__main__": 
+asyncio.run(main()
+
+---------------------------------------------------------
+Exp1:
+#include <WiFi.h>
+#include <HTTPClient.h>
+
+const char* ssid = "Your_SSID";         // Replace with your Wi-Fi SSID
+const char* password = "Your_PASSWORD"; // Replace with your Wi-Fi password
+const char* serverURL = "http://<Raspberry_Pi_IP>:5000/data"; // Replace with your Pi's IP and port
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+
+  // Wait for Wi-Fi connection
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to Wi-Fi...");
+  }
+
+  Serial.println("Connected to Wi-Fi");
+}
+
+void loop() {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.begin(serverURL);
+
+    // Set content type to JSON
+    http.addHeader("Content-Type", "application/json");
+
+    // Create a JSON payload
+    String payload = "{\"message\": \"Hello from ESP32\"}";
+
+    // Send HTTP POST request
+    int httpResponseCode = http.POST(payload);
+
+    if (httpResponseCode > 0) {
+      String response = http.getString();
+      Serial.println("Server response: " + response);
+    } else {
+      Serial.println("Error in sending POST request");
+    }
+
+    http.end();
+  } else {
+    Serial.println("Wi-Fi not connected");
+  }
+
+  delay(5000); // Wait 5 seconds before sending again
+}
+
+
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/data', methods=['POST'])
+def receive_data():
+    data = request.get_json()
+    print(f"Received data: {data}")
+    return jsonify({"status": "success", "message": "Data received"}), 200
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+
+
+
+
