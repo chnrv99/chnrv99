@@ -1,693 +1,135 @@
-import socket
+ Python Code to Read DHT Sensor
+Example Code for DHT Sensor
+python
+import Adafruit_DHT
 
-# Set up the server
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-host = 'localhost'  # Server's hostname or IP address
-port = 12345  # Port number for communication
+# Set the sensor type (DHT11, DHT22, or AM2302)
+sensor = Adafruit_DHT.DHT22  # Change to DHT11 if you're using that model
 
-# Bind the socket to the address and port
-server_socket.bind((host, port))
+# Set the GPIO pin where the data pin of the DHT sensor is connected
+pin = 4  # GPIO4 (physical pin 7)
 
-# Start listening for connections
-server_socket.listen(5)
-print(f"Server listening on {host}:{port}")
+# Read the temperature and humidity
+humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
 
-while True:
-    # Accept a client connection
-    client_socket, addr = server_socket.accept()
-    print(f"Got a connection from {addr}")
-    
-    # Receive data from the client
-    data = client_socket.recv(1024).decode('utf-8')
-    print(f"Received from client: {data}")
-    
-    # Send a response back to the client
-    client_socket.send("Hello from server".encode('utf-8'))
-    
-    # Close the connection
-    client_socket.close()
+if humidity is not None and temperature is not None:
+    print(f"Temp: {temperature:.1f}°C  Humidity: {humidity:.1f}%")
+else:
+    print("Failed to retrieve data from the sensor")
 
+------------------------------------------------------------------------------------
 
-import socket
+Example Implementation
+Basic Structure
+Broker: A test broker like broker.emqx.io or test.mosquitto.org can be used.
+QoS Levels: Set using the qos parameter in the publish and subscribe methods.
+Publisher Code
+python
+import paho.mqtt.client as mqtt
 
-# Set up the client
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-host = 'localhost'  # Server's hostname or IP address
-port = 12345  # Same port as the server
+# Define the broker and port
+BROKER = "broker.emqx.io"
+PORT = 1883
+TOPIC = "test/qos_example"
 
-# Connect to the server
-client_socket.connect((host, port))
-
-# Send data to the server
-client_socket.send("Hello from client".encode('utf-8'))
-
-# Receive data from the server
-data = client_socket.recv(1024).decode('utf-8')
-print(f"Received from server: {data}")
-
-# Close the connection
-client_socket.close()
-
-Diffie hellman
-# Diffie-Hellman Code
-
-# Power function to return value of a^b mod P
-def power(a, b, p):
-    if b == 1:
-        return a
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print("Connected successfully to the broker!")
     else:
-        return pow(a, b) % p
+        print("Connection failed with code", rc)
 
-# Main function
-def main():
-    # Both persons agree upon the public keys G and P
-    # A prime number P is taken
-    P = 23
-    print("The value of P:", P)
+# Initialize MQTT client
+client = mqtt.Client()
 
-    # A primitive root for P, G is taken
-    G = 9
-    print("The value of G:", G)
+# Assign callback functions
+client.on_connect = on_connect
 
-    # Alice chooses the private key a
-    # a is the chosen private key
-    a = 4
-    print("The private key a for Alice:", a)
+# Connect to the broker
+client.connect(BROKER, PORT, 60)
 
-    # Gets the generated key
-    x = power(G, a, P)
+# Publish messages with different QoS levels
+client.loop_start()
+for qos in [0, 1, 2]:
+    message = f"Message with QoS {qos}"
+    client.publish(TOPIC, message, qos=qos)
+    print(f"Published: {message} with QoS {qos}")
 
-    # Bob chooses the private key b
-    # b is the chosen private key
-    b = 3
-    print("The private key b for Bob:", b)
+client.loop_stop()
+client.disconnect()
+Subscriber Code
+python
+Copy code
+import paho.mqtt.client as mqtt
 
-    # Gets the generated key
-    y = power(G, b, P)
+# Define the broker and port
+BROKER = "broker.emqx.io"
+PORT = 1883
+TOPIC = "test/qos_example"
 
-    # Generating the secret key after the exchange of keys
-    ka = power(y, a, P)  # Secret key for Alice
-    kb = power(x, b, P)  # Secret key for Bob
-
-    print("Secret key for Alice is:", ka)
-    print("Secret key for Bob is:", kb)
-
-if __name__ == "__main__":
-    main()
-
-
-MITM Diffie hellman
-import random
- 
-# public keys are taken
-# p is a prime number
-# g is a primitive root of p
-p = int(input('Enter a prime number : '))
-g = int(input('Enter a number : '))
- 
- 
-class A:
-    def __init__(self):
-        # Generating a random private number selected by alice
-        self.n = random.randint(1, p)     
- 
-    def publish(self):
-        # generating public values
-        return (g**self.n)%p
- 
-    def compute_secret(self, gb):
-        # computing secret key
-        return (gb**self.n)%p
- 
- 
-class B:
-    def __init__(self):
-        # Generating a random private number selected for alice
-        self.a = random.randint(1, p)
-        # Generating a random private number selected for bob
-        self.b = random.randint(1, p)
-        self.arr = [self.a,self.b]
- 
-    def publish(self, i):
-        # generating public values
-        return (g**self.arr[i])%p
- 
-    def compute_secret(self, ga, i):
-        # computing secret key
-        return (ga**self.arr[i])%p
- 
- 
-alice = A()
-bob = A()
-eve = B()
- 
-# Printing out the private selected number by Alice and Bob
-print(f'Alice selected (a) : {alice.n}')
-print(f'Bob selected (b) : {bob.n}')
-print(f'Eve selected private number for Alice (c) : {eve.a}')
-print(f'Eve selected private number for Bob (d) : {eve.b}')
- 
-# Generating public values 
-ga = alice.publish()
-gb = bob.publish()
-gea = eve.publish(0)
-geb = eve.publish(1)
-print(f'Alice published (ga): {ga}')
-print(f'Bob published (gb): {gb}')
-print(f'Eve published value for Alice (gc): {gea}')
-print(f'Eve published value for Bob (gd): {geb}')
- 
-# Computing the secret key
-sa = alice.compute_secret(gea)
-sea = eve.compute_secret(ga,0)
-sb = bob.compute_secret(geb)
-seb = eve.compute_secret(gb,1)
-print(f'Alice computed (S1) : {sa}')
-print(f'Eve computed key for Alice (S1) : {sea}')
-print(f'Bob computed (S2) : {sb}')
-print(f'Eve computed key for Bob (S2) : {seb}')
-
-
-# Python for RSA asymmetric cryptographic algorithm.
-# For demonstration, values are
-# relatively small compared to practical application
-import math
-
-
-def gcd(a, h):
-    temp = 0
-    while(1):
-        temp = a % h
-        if (temp == 0):
-            return h
-        a = h
-        h = temp
-
-
-p = 3
-q = 7
-n = p*q
-e = 2
-phi = (p-1)*(q-1)
-
-while (e < phi):
-
-    # e must be co-prime to phi and
-    # smaller than phi.
-    if(gcd(e, phi) == 1):
-        break
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print("Connected successfully to the broker!")
+        # Subscribe to the topic with different QoS levels
+        client.subscribe(TOPIC, qos=2)
     else:
-        e = e+1
+        print("Connection failed with code", rc)
 
-# Private key (d stands for decrypt)
-# choosing d such that it satisfies
-# d*e = 1 + k * totient
+def on_message(client, userdata, msg):
+    print(f"Received message: {msg.payload.decode()} from topic: {msg.topic} with QoS {msg.qos}")
 
-k = 2
-d = (1 + (k*phi))/e
+# Initialize MQTT client
+client = mqtt.Client()
 
-# Message to be encrypted
-msg = 12.0
+# Assign callback functions
+client.on_connect = on_connect
+client.on_message = on_message
 
-print("Message data = ", msg)
+# Connect to the broker
+client.connect(BROKER, PORT, 60)
 
-# Encryption c = (msg ^ e) % n
-c = pow(msg, e)
-c = math.fmod(c, n)
-print("Encrypted data = ", c)
+# Start the loop to process messages
+client.loop_forever()
 
-# Decryption m = (c ^ d) % n
-m = pow(c, d)
-m = math.fmod(m, n)
-print("Original Message Sent = ", m)
 
 
-# This code is contributed by Pranay Arora.
+-----------------------------------------------------
+Code to Measure Distance
+Upload the following code to your Arduino:
 
+cpp
+Copy code
+// Define pins for Trig and Echo
+const int trigPin = 9;
+const int echoPin = 10;
 
-# Python program to implement Playfair Cipher
+// Variable to store the calculated distance
+long duration;
+float distance;
 
-# Function to convert the string to lowercase
+void setup() {
+  pinMode(trigPin, OUTPUT); // Set Trig as OUTPUT
+  pinMode(echoPin, INPUT);  // Set Echo as INPUT
+  Serial.begin(9600);       // Initialize Serial Monitor
+}
 
+void loop() {
+  // Send a 10µs HIGH pulse to Trig
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
 
-def toLowerCase(text):
-    return text.lower()
+  // Measure the duration of the pulse on Echo
+  duration = pulseIn(echoPin, HIGH);
 
-# Function to remove all spaces in a string
+  // Calculate the distance in centimeters
+  distance = duration * 0.034 / 2;
 
+  // Print the distance to the Serial Monitor
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
 
-def removeSpaces(text):
-    newText = ""
-    for i in text:
-        if i == " ":
-            continue
-        else:
-            newText = newText + i
-    return newText
-
-# Function to group 2 elements of a string
-# as a list element
-
-
-def Diagraph(text):
-    Diagraph = []
-    group = 0
-    for i in range(2, len(text), 2):
-        Diagraph.append(text[group:i])
-
-        group = i
-    Diagraph.append(text[group:])
-    return Diagraph
-
-# Function to fill a letter in a string element
-# If 2 letters in the same string matches
-
-
-def FillerLetter(text):
-    k = len(text)
-    if k % 2 == 0:
-        for i in range(0, k, 2):
-            if text[i] == text[i+1]:
-                new_word = text[0:i+1] + str('x') + text[i+1:]
-                new_word = FillerLetter(new_word)
-                break
-            else:
-                new_word = text
-    else:
-        for i in range(0, k-1, 2):
-            if text[i] == text[i+1]:
-                new_word = text[0:i+1] + str('x') + text[i+1:]
-                new_word = FillerLetter(new_word)
-                break
-            else:
-                new_word = text
-    return new_word
-
-
-list1 = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'k', 'l', 'm',
-         'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-
-# Function to generate the 5x5 key square matrix
-
-
-def generateKeyTable(word, list1):
-    key_letters = []
-    for i in word:
-        if i not in key_letters:
-            key_letters.append(i)
-
-    compElements = []
-    for i in key_letters:
-        if i not in compElements:
-            compElements.append(i)
-    for i in list1:
-        if i not in compElements:
-            compElements.append(i)
-
-    matrix = []
-    while compElements != []:
-        matrix.append(compElements[:5])
-        compElements = compElements[5:]
-
-    return matrix
-
-
-def search(mat, element):
-    for i in range(5):
-        for j in range(5):
-            if(mat[i][j] == element):
-                return i, j
-
-
-def encrypt_RowRule(matr, e1r, e1c, e2r, e2c):
-    char1 = ''
-    if e1c == 4:
-        char1 = matr[e1r][0]
-    else:
-        char1 = matr[e1r][e1c+1]
-
-    char2 = ''
-    if e2c == 4:
-        char2 = matr[e2r][0]
-    else:
-        char2 = matr[e2r][e2c+1]
-
-    return char1, char2
-
-
-def encrypt_ColumnRule(matr, e1r, e1c, e2r, e2c):
-    char1 = ''
-    if e1r == 4:
-        char1 = matr[0][e1c]
-    else:
-        char1 = matr[e1r+1][e1c]
-
-    char2 = ''
-    if e2r == 4:
-        char2 = matr[0][e2c]
-    else:
-        char2 = matr[e2r+1][e2c]
-
-    return char1, char2
-
-
-def encrypt_RectangleRule(matr, e1r, e1c, e2r, e2c):
-    char1 = ''
-    char1 = matr[e1r][e2c]
-
-    char2 = ''
-    char2 = matr[e2r][e1c]
-
-    return char1, char2
-
-
-def encryptByPlayfairCipher(Matrix, plainList):
-    CipherText = []
-    for i in range(0, len(plainList)):
-        c1 = 0
-        c2 = 0
-        ele1_x, ele1_y = search(Matrix, plainList[i][0])
-        ele2_x, ele2_y = search(Matrix, plainList[i][1])
-
-        if ele1_x == ele2_x:
-            c1, c2 = encrypt_RowRule(Matrix, ele1_x, ele1_y, ele2_x, ele2_y)
-            # Get 2 letter cipherText
-        elif ele1_y == ele2_y:
-            c1, c2 = encrypt_ColumnRule(Matrix, ele1_x, ele1_y, ele2_x, ele2_y)
-        else:
-            c1, c2 = encrypt_RectangleRule(
-                Matrix, ele1_x, ele1_y, ele2_x, ele2_y)
-
-        cipher = c1 + c2
-        CipherText.append(cipher)
-    return CipherText
-
-
-text_Plain = 'instruments'
-text_Plain = removeSpaces(toLowerCase(text_Plain))
-PlainTextList = Diagraph(FillerLetter(text_Plain))
-if len(PlainTextList[-1]) != 2:
-    PlainTextList[-1] = PlainTextList[-1]+'z'
-
-key = "Monarchy"
-print("Key text:", key)
-key = toLowerCase(key)
-Matrix = generateKeyTable(key, list1)
-
-print("Plain Text:", text_Plain)
-CipherList = encryptByPlayfairCipher(Matrix, PlainTextList)
-
-CipherText = ""
-for i in CipherList:
-    CipherText += i
-print("CipherText:", CipherText)
-
-# This code is Contributed by Boda_Venkata_Nikith
-
-# Python3 code to implement Hill Cipher
- 
-keyMatrix = [[0] * 3 for i in range(3)]
- 
-# Generate vector for the message
-messageVector = [[0] for i in range(3)]
- 
-# Generate vector for the cipher
-cipherMatrix = [[0] for i in range(3)]
- 
-# Following function generates the
-# key matrix for the key string
-def getKeyMatrix(key):
-    k = 0
-    for i in range(3):
-        for j in range(3):
-            keyMatrix[i][j] = ord(key[k]) % 65
-            k += 1
- 
-# Following function encrypts the message
-def encrypt(messageVector):
-    for i in range(3):
-        for j in range(1):
-            cipherMatrix[i][j] = 0
-            for x in range(3):
-                cipherMatrix[i][j] += (keyMatrix[i][x] *
-                                       messageVector[x][j])
-            cipherMatrix[i][j] = cipherMatrix[i][j] % 26
- 
-def HillCipher(message, key):
- 
-    # Get key matrix from the key string
-    getKeyMatrix(key)
- 
-    # Generate vector for the message
-    for i in range(3):
-        messageVector[i][0] = ord(message[i]) % 65
- 
-    # Following function generates
-    # the encrypted vector
-    encrypt(messageVector)
- 
-    # Generate the encrypted text 
-    # from the encrypted vector
-    CipherText = []
-    for i in range(3):
-        CipherText.append(chr(cipherMatrix[i][0] + 65))
- 
-    # Finally print the ciphertext
-    print("Ciphertext: ", "".join(CipherText))
- 
-# Driver Code
-def main():
- 
-    # Get the message to 
-    # be encrypted
-    message = "ACT"
- 
-    # Get the key
-    key = "GYBNQKURP"
- 
-    HillCipher(message, key)
- 
-if __name__ == "__main__":
-    main()
-
-
-
-vergene cipher 
-def generate_key(msg, key):
-    key = list(key)
-    if len(msg) == len(key):
-        return key
-    else:
-        for i in range(len(msg) - len(key)):
-            key.append(key[i % len(key)])
-    return "".join(key)
-
-def encrypt_vigenere(msg, key):
-    encrypted_text = []
-    key = generate_key(msg, key)
-    for i in range(len(msg)):
-        char = msg[i]
-        if char.isupper():
-            encrypted_char = chr((ord(char) + ord(key[i]) - 2 * ord('A')) % 26 + ord('A'))
-        elif char.islower():
-            encrypted_char = chr((ord(char) + ord(key[i]) - 2 * ord('a')) % 26 + ord('a'))
-        else:
-            encrypted_char = char
-        encrypted_text.append(encrypted_char)
-    return "".join(encrypted_text)
-
-def decrypt_vigenere(msg, key):
-    decrypted_text = []
-    key = generate_key(msg, key)
-    for i in range(len(msg)):
-        char = msg[i]
-        if char.isupper():
-            decrypted_char = chr((ord(char) - ord(key[i]) + 26) % 26 + ord('A'))
-        elif char.islower():
-            decrypted_char = chr((ord(char) - ord(key[i]) + 26) % 26 + ord('a'))
-        else:
-            decrypted_char = char
-        decrypted_text.append(decrypted_char)
-    return "".join(decrypted_text)
-
-# Example usage
-text_to_encrypt = "Hello, World!"
-key = "KEY"
-
-encrypted_text = encrypt_vigenere(text_to_encrypt, key)
-print(f"Encrypted Text: {encrypted_text}")
-
-decrypted_text = decrypt_vigenere(encrypted_text, key)
-print(f"Decrypted Text: {decrypted_text}")
-
-#previous code was only support the upper case letters
-#this code can be apply on both
-
- vernam cipher
-
-import random
- 
-def generate_key(plaintext_length):
-    key = ''.join(random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ') for _ in range(plaintext_length))
-    return key
- 
-def encrypt(plaintext, key):
-    ciphertext = ''.join(chr(ord(p) ^ ord(k)) for p, k in zip(plaintext, key))
-    return ciphertext
- 
-def decrypt(ciphertext, key):
-    decrypted_text = ''.join(chr(ord(c) ^ ord(k)) for c, k in zip(ciphertext, key))
-    return decrypted_text
- 
-# Example usage
-if __name__ == "__main__":
-    plaintext = "HELLO"
-    key = generate_key(len(plaintext))
- 
-    print("Plaintext:", plaintext)
-    print("Key:", key)
- 
-    ciphertext = encrypt(plaintext, key)
-    print("Ciphertext:", ciphertext)
- 
-    decrypted_text = decrypt(ciphertext, key)
-    print("Decrypted Text:", decrypted_text)
-
-
-
-# Python3 code to implement Hill Cipher
- 
-keyMatrix = [[0] * 3 for i in range(3)]
- 
-# Generate vector for the message
-messageVector = [[0] for i in range(3)]
- 
-# Generate vector for the cipher
-cipherMatrix = [[0] for i in range(3)]
- 
-# Following function generates the
-# key matrix for the key string
-def getKeyMatrix(key):
-    k = 0
-    for i in range(3):
-        for j in range(3):
-            keyMatrix[i][j] = ord(key[k]) % 65
-            k += 1
- 
-# Following function encrypts the message
-def encrypt(messageVector):
-    for i in range(3):
-        for j in range(1):
-            cipherMatrix[i][j] = 0
-            for x in range(3):
-                cipherMatrix[i][j] += (keyMatrix[i][x] *
-                                       messageVector[x][j])
-            cipherMatrix[i][j] = cipherMatrix[i][j] % 26
- 
-def HillCipher(message, key):
- 
-    # Get key matrix from the key string
-    getKeyMatrix(key)
- 
-    # Generate vector for the message
-    for i in range(3):
-        messageVector[i][0] = ord(message[i]) % 65
- 
-    # Following function generates
-    # the encrypted vector
-    encrypt(messageVector)
- 
-    # Generate the encrypted text 
-    # from the encrypted vector
-    CipherText = []
-    for i in range(3):
-        CipherText.append(chr(cipherMatrix[i][0] + 65))
- 
-    # Finally print the ciphertext
-    print("Ciphertext: ", "".join(CipherText))
- 
-# Driver Code
-def main():
- 
-    # Get the message to 
-    # be encrypted
-    message = "ACT"
- 
-    # Get the key
-    key = "GYBNQKURP"
- 
-    HillCipher(message, key)
- 
-if __name__ == "__main__":
-    main()
-
-
-
-hill cipher
-
-# Python3 code to implement Hill Cipher
- 
-keyMatrix = [[0] * 3 for i in range(3)]
- 
-# Generate vector for the message
-messageVector = [[0] for i in range(3)]
- 
-# Generate vector for the cipher
-cipherMatrix = [[0] for i in range(3)]
- 
-# Following function generates the
-# key matrix for the key string
-def getKeyMatrix(key):
-    k = 0
-    for i in range(3):
-        for j in range(3):
-            keyMatrix[i][j] = ord(key[k]) % 65
-            k += 1
- 
-# Following function encrypts the message
-def encrypt(messageVector):
-    for i in range(3):
-        for j in range(1):
-            cipherMatrix[i][j] = 0
-            for x in range(3):
-                cipherMatrix[i][j] += (keyMatrix[i][x] *
-                                       messageVector[x][j])
-            cipherMatrix[i][j] = cipherMatrix[i][j] % 26
- 
-def HillCipher(message, key):
- 
-    # Get key matrix from the key string
-    getKeyMatrix(key)
- 
-    # Generate vector for the message
-    for i in range(3):
-        messageVector[i][0] = ord(message[i]) % 65
- 
-    # Following function generates
-    # the encrypted vector
-    encrypt(messageVector)
- 
-    # Generate the encrypted text 
-    # from the encrypted vector
-    CipherText = []
-    for i in range(3):
-        CipherText.append(chr(cipherMatrix[i][0] + 65))
- 
-    # Finally print the ciphertext
-    print("Ciphertext: ", "".join(CipherText))
- 
-# Driver Code
-def main():
- 
-    # Get the message to 
-    # be encrypted
-    message = "ACT"
- 
-    # Get the key
-    key = "GYBNQKURP"
- 
-    HillCipher(message, key)
- 
-if __name__ == "__main__":
-    main()
- 
+  delay(500);  // Wait for 500ms before the next measurement
+}
