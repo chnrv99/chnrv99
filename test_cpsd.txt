@@ -1,3 +1,5 @@
+Exp 6: https://github.com/wengaoy/MPU6050-Arduino-and-unity-3d
+
 Exp 5:
 Code: 
 #include <BLEDevice.h> 
